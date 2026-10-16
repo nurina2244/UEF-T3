@@ -1,0 +1,637 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic 3 Quiz</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #e0e0e0; padding: 20px; display: flex; justify-content: center; }
+    .quiz-container { width: 100%; max-width: 680px; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .progress-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; }
+    .badge { padding: 6px 12px; border-radius: 20px; font-size: 14px; }
+    .badge-correct { background-color: #2e7d32; color: white; }
+    .badge-wrong { background-color: #c62828; color: white; }
+    .question { font-size: 18px; margin-bottom: 20px; font-weight: 600; line-height: 1.4; }
+    .option { background: #2c2c2c; padding: 14px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; border: 1px solid #3d3d3d; }
+    .option:hover { background: #3a3a3a; }
+    .option.correct { background: #1b5e20 !important; border-color: #4caf50; color: white; }
+    .option.wrong { background: #b71c1c !important; border-color: #f44336; color: white; }
+    .explanation { margin-top: 15px; padding: 12px; background: #263238; border-left: 4px solid #00bcd4; border-radius: 4px; font-size: 14px; display: none; }
+    .nav-btns { display: flex; justify-content: space-between; margin-top: 25px; }
+    button { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button:disabled { background: #424242; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h2><center>Topic 3 Quiz</center></h2>
+  <div class="progress-bar">
+    <span id="question-counter">Question 1 of 50</span>
+    <span id="score-keeper">Score: 0</span>
+  </div>
+
+  <div id="quiz-content">
+    <div class="question" id="question-text">Loading question...</div>
+    <div id="options-container"></div>
+    <div class="explanation" id="explanation-box"></div>
+  </div>
+
+  <div class="nav-btns">
+    <button id="prev-btn" onclick="prevQuestion()" disabled>Previous</button>
+    <button id="next-btn" onclick="nextQuestion()" disabled>Next</button>
+  </div>
+</div>
+
+<script>
+  const quizData = [
+    {
+      question: "1. What is the definition of User-Centered Design (UCD)?",
+      options: [
+        "A. An iterative design process focusing on understanding users, needs, tasks, and environments throughout product development[cite: 67].",
+        "B. A design approach focused solely on latest hardware technology.",
+        "C. A software coding process based purely on programmer preferences.",
+        "D. A testing process conducted only at the very end of development."
+      ],
+      answer: 0
+    },
+    {
+      question: "2. What is a negative consequence if UCD is not practiced in system development?",
+      options: [
+        "A. Easy navigation[cite: 67]",
+        "B. High user satisfaction",
+        "C. Difficult navigation and confusing interface[cite: 67]",
+        "D. Increased work productivity"
+      ],
+      answer: 2
+    },
+    {
+      question: "3. Which of the following characterizes User-Centered Design compared to traditional design?",
+      options: [
+        "A. Designer decides features completely",
+        "B. Limited user involvement",
+        "C. Testing done only at the end",
+        "D. Users influence features and testing occurs throughout development[cite: 68]"
+      ],
+      answer: 3
+    },
+    {
+      question: "4. What are the four main stages in the UCD process?",
+      options: [
+        "A. Code, Test, Launch, Maintain",
+        "B. Analyze, Code, Evaluate, Market",
+        "C. Identify user needs, Build UI design using wireframes, Conduct usability testing, Refine design[cite: 69]",
+        "D. Sketch, Color, Print, Sell"
+      ],
+      answer: 2
+    },
+    {
+      question: "5. What is User Interface (UI) Design?",
+      options: [
+        "A. The process of designing visual elements and interactive components allowing users to interact effectively[cite: 71].",
+        "B. The process of writing database source codes.",
+        "C. The process of designing computer network architecture.",
+        "D. The process of testing web server speeds."
+      ],
+      answer: 0
+    },
+    {
+      question: "6. What is the primary goal of UI design?",
+      options: [
+        "A. Complex, difficult to learn, and exclusive",
+        "B. Easy to learn, easy to use, visually attractive, efficient, and accessible[cite: 71]",
+        "C. Heavy graphics and dense animations",
+        "D. Requiring deep technical training"
+      ],
+      answer: 1
+    },
+    {
+      question: "7. What is the correct sequence in the UI Design Planning Process?",
+      options: [
+        "A. Wireframe → Gather Requirements → Analyze → Use",
+        "B. Gather User Requirements → Analyze User Tasks → Define User Goals → Create Information Structure → Plan Navigation → Create Wireframe → Usability Review[cite: 73]",
+        "C. Plan Navigation → Build Color Prototype → Test → Launch",
+        "D. Write Code → Create Logo → Test → Gather Requirements"
+      ],
+      answer: 1
+    },
+    {
+      question: "8. What is a wireframe?",
+      options: [
+        "A. A final product model with full colors and animations[cite: 46]",
+        "B. A simple sketch or blueprint of a user interface without colors or detailed graphics[cite: 74]",
+        "C. A database storing user credentials",
+        "D. Source code for a mobile application"
+      ],
+      answer: 1
+    },
+    {
+      question: "9. What are the characteristics of a Low-Fidelity Wireframe?",
+      options: [
+        "A. Full colors, real typography, and realistic images",
+        "B. Simple sketches, usually black and white, boxes, and labels[cite: 75]",
+        "C. Clickable prototype linked with databases",
+        "D. High-resolution graphics"
+      ],
+      answer: 1
+    },
+    {
+      question: "10. Which software tools are commonly used for wireframing?",
+      options: [
+        "A. Microsoft Word and Notepad",
+        "B. Figma, Balsamiq, Canva, Draw.io, Adobe XD, and Sketch[cite: 75]",
+        "C. MySQL and Oracle",
+        "D. XAMPP and Apache"
+      ],
+      answer: 1
+    },
+    {
+      question: "11. What are the main advantages of using wireframes?",
+      options: [
+        "A. Hides design errors",
+        "B. Easy to modify, faster development, improves communication, focuses on functionality before appearance[cite: 76]",
+        "C. Eliminates the need for user testing",
+        "D. Ensures code is written faster"
+      ],
+      answer: 1
+    },
+    {
+      question: "12. What is a User Persona?",
+      options: [
+        "A. A list of system programming codes",
+        "B. A fictional representation of a target user based on research and real user data[cite: 33]",
+        "C. A project financial document",
+        "D. A software error report"
+      ],
+      answer: 1
+    },
+    {
+      question: "13. What elements are typically contained in a User Persona?",
+      options: [
+        "A. Name, Age, Occupation, Background, Goals, Motivations, Pain points, Technical skills, Preferred devices[cite: 33]",
+        "B. IP Address, Passwords, Network Ports",
+        "C. Budget estimates and employee lists",
+        "D. Company holiday schedules"
+      ],
+      answer: 0
+    },
+    {
+      question: "14. What is a User Journey Map?",
+      options: [
+        "A. A physical office location map",
+        "B. Visualizes the steps users take while completing a task within a system[cite: 35]",
+        "C. A network server flowchart",
+        "D. A system security checklist"
+      ],
+      answer: 1
+    },
+    {
+      question: "15. What are the components of a User Journey Map?",
+      options: [
+        "A. CPU, RAM, Storage",
+        "B. Goal, Actions, Touchpoints, Thoughts, Emotions, Pain Points, Opportunities[cite: 35]",
+        "C. Titles, Chapters, Pages",
+        "D. Pricing, Discounts, Taxes"
+      ],
+      answer: 1
+    },
+    {
+      question: "16. What is the main purpose of an Empathy Map?",
+      options: [
+        "A. To understand users by organizing observations into Think, Feel, Say, and Do perspectives[cite: 38]",
+        "B. To calculate computer processing speed",
+        "C. To evaluate source code performance",
+        "D. To set product market prices"
+      ],
+      answer: 0
+    },
+    {
+      question: "17. What are the four core perspectives in a basic Empathy Map?",
+      options: [
+        "A. Input, Process, Output, Storage",
+        "B. Think, Feel, Say, Do[cite: 38]",
+        "C. Hardware, Software, Netware, Humanware",
+        "D. Red, Blue, Green, Yellow"
+      ],
+      answer: 1
+    },
+    {
+      question: "18. What is Content Strategy in UX?",
+      options: [
+        "A. The planning, creation, management, and delivery of useful and meaningful content to users[cite: 41]",
+        "B. Marketing products on social media platforms",
+        "C. Printing promotional flyers",
+        "D. Pricing strategies for retail items"
+      ],
+      answer: 0
+    },
+    {
+      question: "19. Which of the following is an example of good button microcopy based on UX principles?",
+      options: [
+        "A. \"Click Here\"[cite: 41]",
+        "B. \"Here\"",
+        "C. \"Pay Now\"[cite: 41]",
+        "D. \"Press This Button\""
+      ],
+      answer: 2
+    },
+    {
+      question: "20. What are Microinteractions?",
+      options: [
+        "A. Large-scale communications between computer servers",
+        "B. Small interface responses that provide feedback when users perform an action[cite: 42]",
+        "C. Conversations between project managers and clients",
+        "D. Smart home device networks"
+      ],
+      answer: 1
+    },
+    {
+      question: "21. Which of the following are examples of Microinteractions?",
+      options: [
+        "A. Button animation, toggle switch, like button, loading progress indicator[cite: 42]",
+        "B. Operating system installations",
+        "C. Motherboard hardware repairs",
+        "D. LAN cable replacement"
+      ],
+      answer: 0
+    },
+    {
+      question: "22. What is the main difference between a Wireframe, Mockup, and Prototype?",
+      options: [
+        "A. Wireframe shows black & white structure, Mockup shows static high-fidelity visuals, Prototype shows clickable interactive simulation[cite: 46].",
+        "B. All three are identical source code files",
+        "C. Wireframe is the final product, Mockup is the initial draft",
+        "D. Prototypes cannot be tested by users"
+      ],
+      answer: 0
+    },
+    {
+      question: "23. What is the primary characteristic of a Mockup?",
+      options: [
+        "A. Lacks color and images",
+        "B. High-fidelity visual design showing colors, fonts, images, and branding statically[cite: 46]",
+        "C. Fully clickable like a live app",
+        "D. Drawn only on paper using pencils"
+      ],
+      answer: 1
+    },
+    {
+      question: "24. What is the main purpose of building a Prototype?",
+      options: [
+        "A. To store server database files",
+        "B. To test user experience, validate design, and identify usability issues[cite: 46]",
+        "C. To write backend programming code",
+        "D. To replace traditional business manuals"
+      ],
+      answer: 1
+    },
+    {
+      question: "25. Which platform environments are supported by Figma?",
+      options: [
+        "A. macOS only",
+        "B. Web, Windows, and macOS[cite: 58]",
+        "C. Android mobile devices only",
+        "D. Linux server software only"
+      ],
+      answer: 1
+    },
+    {
+      question: "26. What is a key advantage of Figma?",
+      options: [
+        "A. Real-time cloud-based collaboration[cite: 50]",
+        "B. Requires heavy software installation on every computer",
+        "C. Cannot be shared via web links",
+        "D. Restricted to single-user editing"
+      ],
+      answer: 0
+    },
+    {
+      question: "27. Which design tool is specifically built for macOS users?",
+      options: [
+        "A. Adobe XD",
+        "B. Justinmind",
+        "C. Sketch[cite: 53]",
+        "D. Figma"
+      ],
+      answer: 2
+    },
+    {
+      question: "28. What key features are found in Adobe XD?",
+      options: [
+        "A. Auto-Animate transitions, voice prototyping, and integration with Adobe Photoshop/Illustrator[cite: 54]",
+        "B. Built-in SQL databases",
+        "C. Physical cloud server management",
+        "D. Professional 4K video editing"
+      ],
+      answer: 0
+    },
+    {
+      question: "29. What is Justinmind best suited for?",
+      options: [
+        "A. Simple graphic posters",
+        "B. Complex enterprise software, banking systems, and healthcare applications[cite: 57]",
+        "C. 3D video games",
+        "D. Podcast audio editing"
+      ],
+      answer: 1
+    },
+    {
+      question: "30. What is a Low-Fidelity Prototype?",
+      options: [
+        "A. A simple, basic representation of a proposed interface without detailed colors, graphics, or animations[cite: 22]",
+        "B. A market-ready software product",
+        "C. A massive centralized database",
+        "D. Complete application source code"
+      ],
+      answer: 0
+    },
+    {
+      question: "31. What is Paper-Based Prototyping?",
+      options: [
+        "A. Designing digital systems directly on computer displays",
+        "B. A low-fidelity prototyping technique where screens and components are drawn or printed on paper[cite: 23]",
+        "C. Using 3D printers to build hardware",
+        "D. Saving electronic documents as PDFs"
+      ],
+      answer: 1
+    },
+    {
+      question: "32. What is Step 1 in Paper-Based Prototyping?",
+      options: [
+        "A. Sketching full-color graphics",
+        "B. Identify the User Task[cite: 24]",
+        "C. Purchasing web servers",
+        "D. Writing financial reports"
+      ],
+      answer: 1
+    },
+    {
+      question: "33. What are the main advantages of Low-Fidelity Prototyping?",
+      options: [
+        "A. High cost and long development time",
+        "B. Quick to create, low cost, easy to modify, suitable for early user feedback[cite: 25]",
+        "C. Fully interactive like final systems",
+        "D. Accurately represents final visual appearance"
+      ],
+      answer: 1
+    },
+    {
+      question: "34. What are the main limitations of Low-Fidelity Prototyping?",
+      options: [
+        "A. Limited interactivity, doesn't accurately represent final visuals, cannot fully simulate complex functionality[cite: 25]",
+        "B. Too difficult to draw",
+        "C. Requires high-speed broadband internet",
+        "D. Involves extremely high development costs"
+      ],
+      answer: 0
+    },
+    {
+      question: "35. What are the primary design considerations for an Automated Teller Machine (ATM) system?",
+      options: [
+        "A. Fancy graphics and animations",
+        "B. Simplicity, security, and error prevention[cite: 20]",
+        "C. Online multiplayer gaming capabilities",
+        "D. Ultra-high display resolutions"
+      ],
+      answer: 1
+    },
+    {
+      question: "36. What is the standard navigation flow for an ATM system?",
+      options: [
+        "A. Insert Card → Select Language → Enter PIN → Select Transaction → Complete Transaction[cite: 11]",
+        "B. Print Receipt → Insert Cash → Insert Card",
+        "C. Select Transaction → Insert Card → Close System",
+        "D. Enter PIN → Remove Card → Select Language"
+      ],
+      answer: 0
+    },
+    {
+      question: "37. What are key design considerations for Web Applications?",
+      options: [
+        "A. Navigation, responsive design, consistency, and accessibility[cite: 13, 20]",
+        "B. Direct smartphone camera access",
+        "C. Voice-command-only interaction",
+        "D. Small screen constraints only"
+      ],
+      answer: 0
+    },
+    {
+      question: "38. What are primary design considerations for Mobile Applications?",
+      options: [
+        "A. Small screen size, touch targets, simple navigation, device features (GPS, camera)[cite: 15, 20]",
+        "B. Full-size physical keyboards",
+        "C. Wired LAN cable connections",
+        "D. Billboards display resolutions"
+      ],
+      answer: 0
+    },
+    {
+      question: "39. What is an example of a Voice Response System prompt?",
+      options: [
+        "A. \"Press 1 for account information. Press 2 for technical support.\"[cite: 16]",
+        "B. \"Click the green button on the right side of the screen.\"",
+        "C. \"Scan your fingerprint on the optical scanner.\"",
+        "D. \"Insert your debit card into the slot.\""
+      ],
+      answer: 0
+    },
+    {
+      question: "40. What are critical design considerations for Voice Response Systems?",
+      options: [
+        "A. Long and complex voice instructions",
+        "B. Clear instructions, limited options (memory load), natural language, error recovery[cite: 17, 20]",
+        "C. Complex full-color graphic screens",
+        "D. Optical mouse and keyboard utilization"
+      ],
+      answer: 1
+    },
+    {
+      question: "41. What is a Multimedia Environment?",
+      options: [
+        "A. A system combining text, images, graphics, audio, video, and animation[cite: 18]",
+        "B. A plain text coding editor",
+        "C. A cloud server network",
+        "D. Financial spreadsheet software"
+      ],
+      answer: 0
+    },
+    {
+      question: "42. What are key design considerations for Multimedia Environments?",
+      options: [
+        "A. Media integration, user control, cognitive load, consistency, and accessibility[cite: 19, 20]",
+        "B. No interactive user controls",
+        "C. Endless unformatted text blocks",
+        "D. High GPU processor speed"
+      ],
+      answer: 0
+    },
+    {
+      question: "43. What is the main purpose of error prevention features in ATM interfaces?",
+      options: [
+        "A. Reducing user errors and providing clear error messages (e.g., \"Incorrect PIN\")[cite: 11]",
+        "B. Automatically deleting bank account information",
+        "C. Preventing users from accessing machines at night",
+        "D. Speeding up unlimited cash withdrawals"
+      ],
+      answer: 0
+    },
+    {
+      question: "44. Why is responsive design important for web applications?",
+      options: [
+        "A. To ensure interfaces function and display correctly across various device screen sizes[cite: 13]",
+        "B. To make web pages difficult to view on mobile phones",
+        "C. To slow down web page loading times",
+        "D. To eliminate the need for images"
+      ],
+      answer: 0
+    },
+    {
+      question: "45. Why is usability testing conducted with real users?",
+      options: [
+        "A. To evaluate personal user errors",
+        "B. To evaluate ease of use, efficiency, identify usability issues, and gather improvement feedback[cite: 70]",
+        "C. To test office internet speeds",
+        "D. To sell products directly to users"
+      ],
+      answer: 1
+    },
+    {
+      question: "46. What happens during the Refine stage of UCD?",
+      options: [
+        "A. Leaving the system unchanged without modifications",
+        "B. Revising the design by incorporating feedback from usability testing to enhance user satisfaction[cite: 70]",
+        "C. Shutting down system development projects",
+        "D. Deleting previously built modules"
+      ],
+      answer: 1
+    },
+    {
+      question: "47. What does Accessibility mean in UI/UX design?",
+      options: [
+        "A. Ensuring systems accommodate diverse users, including older adults and people with disabilities[cite: 11, 13]",
+        "B. Ensuring systems are only accessible to tech-savvy youth",
+        "C. Setting hard-to-crack passwords",
+        "D. Limiting network access to local servers"
+      ],
+      answer: 0
+    },
+    {
+      question: "48. What is the function of a Storyboard in low-fidelity prototyping?",
+      options: [
+        "A. Demonstrating visual sequences of how users interact with systems in real-life scenarios[cite: 22]",
+        "B. Storing company employee directories",
+        "C. Calculating design project budgets",
+        "D. Writing database scripts"
+      ],
+      answer: 0
+    },
+    {
+      question: "49. Which primary interaction method is associated with Mobile Applications?",
+      options: [
+        "A. Mouse and mechanical keyboard",
+        "B. Touch and gestures[cite: 20]",
+        "C. Wired landline phones",
+        "D. Magnetic tape drives"
+      ],
+      answer: 1
+    },
+    {
+      question: "50. Why is the UCD process described as iterative?",
+      options: [
+        "A. Because design work is done only once in a lifetime",
+        "B. Because designers can return to earlier stages whenever new insights or issues are discovered[cite: 76, 77]",
+        "C. Because computers cannot change once built",
+        "D. Because it avoids user interaction entirely"
+      ],
+      answer: 1
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let answered = false;
+
+  const questionCounter = document.getElementById("question-counter");
+  const scoreKeeper = document.getElementById("score-keeper");
+  const questionText = document.getElementById("question-text");
+  const optionsContainer = document.getElementById("options-container");
+  const explanationBox = document.getElementById("explanation-box");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+
+  function loadQuestion() {
+    answered = false;
+    explanationBox.style.display = "none";
+    nextBtn.disabled = true;
+    prevBtn.disabled = currentQuestion === 0;
+
+    questionCounter.innerText = `Question ${currentQuestion + 1} of ${quizData.length}`;
+    scoreKeeper.innerText = `Score: ${score}`;
+
+    const q = quizData[currentQuestion];
+    questionText.innerText = q.question;
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((opt, index) => {
+      const div = document.createElement("div");
+      div.className = "option";
+      div.innerText = opt;
+      div.onclick = () => selectOption(index, div);
+      optionsContainer.appendChild(div);
+    });
+  }
+
+  function selectOption(selectedIndex, element) {
+    if (answered) return;
+    answered = true;
+
+    const q = quizData[currentQuestion];
+    const options = optionsContainer.children;
+
+    if (selectedIndex === q.answer) {
+      element.classList.add("correct");
+      score++;
+      scoreKeeper.innerText = `Score: ${score}`;
+    } else {
+      element.classList.add("wrong");
+      options[q.answer].classList.add("correct");
+    }
+
+    // Show correct explanation badge or message hint
+    explanationBox.style.display = "block";
+    explanationBox.innerHTML = `<span class="badge ${selectedIndex === q.answer ? 'badge-correct' : 'badge-wrong'}">${selectedIndex === q.answer ? 'Correct!' : 'Incorrect!'}</span> The correct answer is option <strong>${String.fromCharCode(65 + q.answer)}</strong>.`;
+
+    nextBtn.disabled = false;
+  }
+
+  function nextQuestion() {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  function prevQuestion() {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      loadQuestion();
+    }
+  }
+
+  function showResults() {
+    document.querySelector(".quiz-container").innerHTML = `
+      <h2 style="text-align: center; color: #4caf50;">Quiz Completed! 🎉</h2>
+      <p style="text-align: center; font-size: 20px; margin: 20px 0;">Your final score is <strong>${score} / ${quizData.length}</strong> (${((score/quizData.length)*100).toFixed(1)}%)</p>
+      <button style="display: block; width: 100%; margin-top: 20px;" onclick="location.reload()">Restart Quiz</button>
+    `;
+  }
+
+  // Initialize quiz load
+  loadQuestion();
+</script>
+
+</body>
+</html>
